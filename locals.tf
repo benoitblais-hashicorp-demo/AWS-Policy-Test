@@ -13,7 +13,7 @@ locals {
   # Tags applied to all resources, creation_date formatted as MM/DD/YYYY
   tags = {
     #creation_date = formatdate("MM/DD/YYYY", time_static.creation_date.rfc3339)
-    creation_date = "2026-11-04"
+    creation_date = "11/04/2026"
   }
 }
 
