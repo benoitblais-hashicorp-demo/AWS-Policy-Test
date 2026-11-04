@@ -13,9 +13,8 @@ This repository provisions AWS resources whose only purpose is to **test HCP Ter
 The identity used by HCP Terraform must be allowed to manage the resources currently deployed (see [Test Components](#test-components)). For the VPC, this means at minimum:
 
 - **AWS:**
-  - Create, modify, and delete VPCs, subnets, route tables, route table associations, Internet Gateways, NAT Gateways, Elastic IPs, and default network resources (`ec2:*` actions on these resource types).
+  - Create, modify, and delete VPCs (`ec2:CreateVpc`, `ec2:ModifyVpcAttribute`, `ec2:DeleteVpc`, `ec2:DescribeVpcs`, `ec2:DescribeVpcAttribute`).
   - Create and delete tags (`ec2:CreateTags`, `ec2:DeleteTags`).
-  - Read Availability Zones and instance type offerings (`ec2:DescribeAvailabilityZones`, `ec2:DescribeInstanceTypeOfferings`).
 
 Add the permissions required by any new resource type introduced for a test.
 
@@ -33,7 +32,7 @@ No static AWS credentials are stored in the code or in the workspace.
 | --- | --- | --- |
 | `random_string.identifier` | `locals.tf` | 4-character lowercase suffix appended to the resource prefix to avoid naming collisions. |
 | `time_static.creation_date` | `locals.tf` | Timestamp recorded on the first apply and kept stable on later runs. Source of the `creation_date` tag (`MM/DD/YYYY`). |
-| `module.vpc` | `main.tf` | AWS VPC with private and public subnets in up to 3 Availability Zones, and a single NAT Gateway. |
+| `aws_vpc.main` | `main.tf` | AWS VPC. |
 
 Every resource receives the `creation_date` tag through `local.tags`.
 
@@ -43,9 +42,9 @@ The policy scenarios and their expected results are listed in [`docs/SPECIFICATI
 
 1. Create an HCP Terraform workspace connected to this repository, and attach the policy set to be tested.
 2. Configure the AWS dynamic credentials variables described above.
-3. Optionally set the input variables (`region`, `resources_prefix`, `vpc_cidr`, `instance_type`) to switch a scenario between compliant and non-compliant.
+3. Optionally set the input variables (`region`, `resources_prefix`, `vpc_cidr`) to switch a scenario between compliant and non-compliant.
 4. Trigger a run and review the policy check results.
-5. Destroy the resources when the test is finished (the NAT Gateway is billed hourly).
+5. Destroy the resources when the test is finished.
 
 ## Documentation
 
@@ -63,13 +62,7 @@ The following requirements are needed by this module:
 
 ## Modules
 
-The following Modules are called:
-
-### <a name="module_vpc"></a> [vpc](#module\_vpc)
-
-Source: terraform-aws-modules/vpc/aws
-
-Version: ~> 5.16
+No modules.
 
 ## Required Inputs
 
@@ -78,14 +71,6 @@ No required inputs.
 ## Optional Inputs
 
 The following input variables are optional (have default values):
-
-### <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type)
-
-Description: (Optional) EC2 instance type.
-
-Type: `string`
-
-Default: `"t3.medium"`
 
 ### <a name="input_region"></a> [region](#input\_region)
 
@@ -115,10 +100,9 @@ Default: `"10.1.0.0/16"`
 
 The following resources are used by this module:
 
+- [aws_vpc.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) (resource)
 - [random_string.identifier](https://registry.terraform.io/providers/hashicorp/random/3.8.1/docs/resources/string) (resource)
 - [time_static.creation_date](https://registry.terraform.io/providers/hashicorp/time/0.13.1/docs/resources/static) (resource)
-- [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) (data source)
-- [aws_ec2_instance_type_offerings.supported](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ec2_instance_type_offerings) (data source)
 
 ## Outputs
 
@@ -130,7 +114,7 @@ No outputs.
 - [HCP Terraform policy enforcement](https://developer.hashicorp.com/terraform/cloud-docs/policy-enforcement)
 - [HCP Terraform dynamic provider credentials for AWS](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/dynamic-provider-credentials/aws-configuration)
 - [Terraform AWS provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
-- [Terraform AWS VPC module](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest)
 - [Terraform time provider - `time_static`](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/static)
 - [Terraform random provider - `random_string`](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string)
+- [Terraform AWS provider - `aws_vpc`](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc)
 <!-- END_TF_DOCS -->

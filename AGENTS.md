@@ -9,8 +9,8 @@ This project provisions AWS resources whose only purpose is to **test HCP Terraf
 - The set of resources changes over time. Resources are added, modified, or removed depending on the policy being tested.
 - Resources may be intentionally **compliant** or **non-compliant** with a policy, so that both the pass and fail paths can be exercised. Do not "fix" a resource that is non-compliant on purpose; check the request or the `docs/SPECIFICATION.md` test scenarios first.
 - Runs are executed by HCP Terraform (VCS-driven). Policy sets are attached to the workspace and evaluated during the run.
-- The configuration currently provisions a single AWS VPC (via the `terraform-aws-modules/vpc/aws` module), tagged with a dynamic `creation_date` tag.
-- Resources are short-lived and should be destroyed when the test is finished (a NAT Gateway, for example, is billed hourly).
+- The configuration currently provisions a single AWS VPC (`aws_vpc.main`), tagged with a dynamic `creation_date` tag.
+- Resources are short-lived and should be destroyed when the test is finished, especially costly ones (for example NAT Gateways, which are billed hourly).
 
 ## Module and Repository Structure
 
