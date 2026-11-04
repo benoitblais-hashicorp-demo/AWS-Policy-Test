@@ -13,3 +13,34 @@ resource "aws_vpc" "main" {
     local.tags
   )
 }
+
+
+
+
+resource "aws_sns_topic" "test" {
+  name         = "public-sns-topic"
+  display_name = "public-sns-topic"
+}
+
+resource "aws_sns_topic_policy" "test" {
+  arn = aws_sns_topic.test.arn
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid = "AllowPublicAccess"
+        Effect = "Allow"
+        Principal = {
+          AWS = "*"
+        }
+        Action = [
+          "sns:Publish",
+          "sns:Subscribe",
+          "sns:GetTopicAttributes"
+        ]
+        Resource = aws_sns_topic.test.arn
+      }
+    ]
+  })
+
+}
