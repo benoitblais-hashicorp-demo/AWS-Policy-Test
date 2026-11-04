@@ -10,9 +10,10 @@ locals {
   global_id        = random_string.identifier.result
   resources_prefix = "${var.resources_prefix}-${local.global_id}"
 
-  # Tags applied to all resources, creation_date formatted as YYYY-MM-DD
+  # Tags applied to all resources, creation_date formatted as MM/DD/YYYY
   tags = {
-    creation_date = formatdate("YYYY-MM-DD", time_static.creation_date.rfc3339)
+    #creation_date = formatdate("MM/DD/YYYY", time_static.creation_date.rfc3339)
+    creation_date = "2026-11-04"
   }
 }
 

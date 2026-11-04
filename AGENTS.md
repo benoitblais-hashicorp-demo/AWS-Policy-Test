@@ -91,7 +91,7 @@ Refer to CONTRIBUTING.md for general coding guidelines. HashiCorp's Terraform st
 
 ## Tagging
 
-- Every taggable resource must carry the `creation_date` tag, formatted `YYYY-MM-DD`.
+- Every taggable resource must carry the `creation_date` tag, formatted `MM/DD/YYYY`.
 - The date is generated dynamically from the `time_static.creation_date` resource and exposed through `local.tags` (see `locals.tf`). Do not hardcode a date.
 - Apply `local.tags` through the `tags` argument of each resource or module. Do not redefine the tag elsewhere.
 - Policies may check for this tag, so a resource without it is a deliberate test case and must be documented in `docs/SPECIFICATION.md`.

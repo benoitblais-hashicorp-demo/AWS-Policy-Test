@@ -28,7 +28,7 @@ No static AWS credentials are stored in the code or in the workspace.
 | Resource | File | Description |
 | --- | --- | --- |
 | `random_string.identifier` | `locals.tf` | 4-character lowercase suffix appended to the resource prefix to avoid naming collisions. |
-| `time_static.creation_date` | `locals.tf` | Timestamp recorded on the first apply and kept stable on later runs. Source of the `creation_date` tag (`YYYY-MM-DD`). |
+| `time_static.creation_date` | `locals.tf` | Timestamp recorded on the first apply and kept stable on later runs. Source of the `creation_date` tag (`MM/DD/YYYY`). |
 | `module.vpc` | `main.tf` | AWS VPC with private and public subnets in up to 3 Availability Zones, and a single NAT Gateway. |
 
 Every resource receives the `creation_date` tag through `local.tags`.

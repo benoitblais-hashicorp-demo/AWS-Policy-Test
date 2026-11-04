@@ -49,15 +49,15 @@ This document describes what this repository deploys and which HCP Terraform pol
 
 ## Tagging
 
-All resources carry a `creation_date` tag in the `YYYY-MM-DD` format.
+All resources carry a `creation_date` tag in the `MM/DD/YYYY` format.
 
 ```hcl
-creation_date = formatdate("YYYY-MM-DD", time_static.creation_date.rfc3339)
+creation_date = formatdate("MM/DD/YYYY", time_static.creation_date.rfc3339)
 ```
 
 - The value comes from `time_static.creation_date` (see `locals.tf`), so it is dynamic but stable across runs.
 - `local.tags` is passed to the VPC module through its `tags` argument.
-- Policies can check that the tag exists and that its value matches the `YYYY-MM-DD` pattern.
+- Policies can check that the tag exists and that its value matches the `MM/DD/YYYY` pattern.
 
 ---
 
