@@ -62,8 +62,8 @@ module "vpc" {
   name               = "${local.resources_prefix}-vpc"
   cidr               = var.vpc_cidr
   azs                = local.azs
-  enable_nat_gateway = true
-  single_nat_gateway = true
+  enable_nat_gateway = false
+  single_nat_gateway = false
   private_subnets    = [for idx, az in local.azs : cidrsubnet(var.vpc_cidr, 4, idx)]
   public_subnets     = [for idx, az in local.azs : cidrsubnet(var.vpc_cidr, 8, idx + 48)]
   tags               = local.tags
