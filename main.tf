@@ -28,7 +28,7 @@ resource "aws_sns_topic_policy" "test" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid = "AllowPublicAccess"
+        Sid    = "AllowPublicAccess"
         Effect = "Allow"
         Principal = {
           AWS = "*"
