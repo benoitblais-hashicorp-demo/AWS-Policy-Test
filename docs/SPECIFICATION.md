@@ -18,8 +18,6 @@ This document describes what this repository deploys and which HCP Terraform pol
               ┌──────────────▼──────────────┐
               │      AWS (ca-central-1)     │
               │  VPC (10.1.0.0/16)          │
-              │  Private + public subnets   │
-              │  Single NAT Gateway         │
               │  Tag: creation_date         │
               └─────────────────────────────┘
 ```
@@ -32,18 +30,15 @@ This document describes what this repository deploys and which HCP Terraform pol
 | --- | --- |
 | `random_string.identifier` | 4-character lowercase suffix used in `local.resources_prefix` (`<resources_prefix>-<suffix>`). |
 | `time_static.creation_date` | Records the time of the first apply. It is not recalculated on later runs. |
-| `module.vpc` | `terraform-aws-modules/vpc/aws` (`~> 5.16`). Private and public subnets in up to 3 AZs, one NAT Gateway shared by all AZs. |
-| `data.aws_availability_zones.available` | Healthy AZs in the selected region. |
-| `data.aws_ec2_instance_type_offerings.supported` | AZs where `var.instance_type` is offered. Used to select the AZs for the subnets. |
+| `aws_vpc.main` | AWS VPC using `var.vpc_cidr`, named `<resources_prefix>-<suffix>-vpc`. |
 
 ### Inputs
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `instance_type` | `t3.medium` | Instance type used only to filter the AZs. Restricted by a validation list. |
 | `region` | `ca-central-1` | AWS region. |
-| `resources_prefix` | `argocd` | Prefix applied to resource names. |
-| `vpc_cidr` | `10.1.0.0/16` | VPC CIDR block. Private subnets are `/20`, public subnets are `/24`. |
+| `resources_prefix` | `policies` | Prefix applied to resource names. |
+| `vpc_cidr` | `10.1.0.0/16` | VPC CIDR block. |
 
 ---
 
@@ -56,7 +51,7 @@ creation_date = formatdate("MM/DD/YYYY", time_static.creation_date.rfc3339)
 ```
 
 - The value comes from `time_static.creation_date` (see `locals.tf`), so it is dynamic but stable across runs.
-- `local.tags` is passed to the VPC module through its `tags` argument.
+- `local.tags` is merged into the `tags` argument of `aws_vpc.main`.
 - Policies can check that the tag exists and that its value matches the `MM/DD/YYYY` pattern.
 
 ---
@@ -67,8 +62,8 @@ Add one row per scenario. The policy name and expected result must be filled in 
 
 | Scenario | Policy | Resource | Compliant | Expected result | How to trigger |
 | --- | --- | --- | --- | --- | --- |
-| `creation_date` tag is present and well formatted | _To be defined_ | `module.vpc` | Yes | Pass | Default configuration. |
-| `creation_date` tag is missing | _To be defined_ | `module.vpc` | No | Fail | Remove `tags = local.tags` from `module.vpc`. |
+| `creation_date` tag is present and well formatted | _To be defined_ | `aws_vpc.main` | Yes | Pass | Default configuration. |
+| `creation_date` tag is missing | _To be defined_ | `aws_vpc.main` | No | Fail | Remove `local.tags` from the `tags` of `aws_vpc.main`. |
 
 ---
 
@@ -80,7 +75,6 @@ Add one row per scenario. The policy name and expected result must be filled in 
 | `time_static` for the creation date | Avoids a perpetual diff that `timestamp()` would cause on every run. |
 | Random suffix on the resource prefix | Several deployments can coexist in the same AWS account. |
 | Variables for values a policy may check | A scenario can be switched between compliant and non-compliant without code changes. |
-| Single NAT Gateway | Reduces cost for a short-lived test environment. |
 
 ---
 
